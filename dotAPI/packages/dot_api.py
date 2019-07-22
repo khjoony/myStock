@@ -1,3 +1,4 @@
+import re
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup as bs
@@ -17,13 +18,13 @@ BSN_TP = '&bsn_tp=A001&bsn_tp=A002&bsn_tp=A003'
 
 URL = URL_MAIN + URL_AUTH + API_KEY + URL_CRP + COMPONY_CODE + URL_DT + BSN_TP
 RESPONSE = requests.get(URL).text
-SOUP = bs(RESPONSE, 'html.parser')
+soup = bs(RESPONSE, 'html.parser')
 
 
 ## Define Empty DataFrame
 DATA = pd.DataFrame()
 
-RESULTS = SOUP.select('list')
+RESULTS = soup.select('list')
 
 for result in RESULTS:
     temp = pd.DataFrame(([[result.crp_cls.string, result.crp_nm.string,\
