@@ -1,35 +1,56 @@
+########################################
+# Analysys Stock                       #
+########################################
 import os
-import csv
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup as bs
-import webbrowser
-COMPONY_CODES = {
-    '안국약품' : '001540',
-    '한솔 케미칼' : '014680',
-}
+## import webbrowser
+COMPONY_CODES = {}
 
 ## Reading CSV FILE OF COMPANY_CODE
-DF = pd.read_csv('..\\sources\\Kospi1.csv', encoding='utf8')
-DF
+from pathlib import Path as path
+##import os
+
+MY_PATH = os.path.dirname(os.path.abspath(__file__))
+print(MY_PATH)
+MY_PATH = path(MY_PATH)
+## MY_PATH.parent
+kospi_path = os.path.join(MY_PATH.parent, 'sources\Kospiu.csv')
+kospi_path = path(kospi_path)
+print(kospi_path)
+DF = pd.read_csv(kospi_path, encoding='utf8')
+
+for i in range(len(DF.회사명)):
+    ## print(DF.종목코드[i])
+    COMPONY_CODES[DF.회사명[i]] = DF.종목코드[i]
+## print(COMPONY_CODES)
+
 URL_MAIN = 'http://dart.fss.or.kr'
 URL_AUTH = '/api/search.xml?auth='
 API_KEY = '163049595a0c6281a6e58e9b248a7e7143b15b3d'
 URL_CRP = '&crp_cd='
-COMPONY_CODE = COMPONY_CODES['안국약품']
+def getCompayCode(name):
+    c_code = str(COMPONY_CODES[name])
+    while len(c_code) != 6:
+        c_code = '0' + c_code
+    print(c_code)
+    return (c_code)
+
+COMPONY_CODE = getCompayCode('유한양행')
 URL_DT = '&start_dt=19990101'
 BSN_TP = '&bsn_tp=A001&bsn_tp=A002&bsn_tp=A003'
 
 
-URL = URL_MAIN + URL_AUTH + API_KEY + URL_CRP + COMPONY_CODE + URL_DT + BSN_TP
+URL = URL_MAIN + URL_AUTH + API_KEY + URL_CRP + str(COMPONY_CODE) + URL_DT + BSN_TP
 RESPONSE = requests.get(URL).text
-soup = bs(RESPONSE, 'html.parser')
+SOUP = bs(RESPONSE, 'html.parser')
 
 
 ## Define Empty DataFrame
 DATA = pd.DataFrame()
 
-RESULTS = soup.select('list')
+RESULTS = SOUP.select('list')
 
 for result in RESULTS:
     temp = pd.DataFrame(([[result.crp_cls.string, result.crp_nm.string,\
@@ -64,4 +85,4 @@ print(URL_FINAL)
 RESPONSE3 = requests.get(URL_FINAL).text
 SOUP3 = bs(RESPONSE3, 'html.parser')
 RESULTS3 = SOUP3.select('table')
-##print(RESULTS3)
+## print(RESULTS3)
