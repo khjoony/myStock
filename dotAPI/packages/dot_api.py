@@ -1,4 +1,5 @@
-import re
+import os
+import csv
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup as bs
@@ -7,6 +8,10 @@ COMPONY_CODES = {
     '안국약품' : '001540',
     '한솔 케미칼' : '014680',
 }
+
+## Reading CSV FILE OF COMPANY_CODE
+DF = pd.read_csv('..\\sources\\Kospi1.csv', encoding='utf8')
+DF
 URL_MAIN = 'http://dart.fss.or.kr'
 URL_AUTH = '/api/search.xml?auth='
 API_KEY = '163049595a0c6281a6e58e9b248a7e7143b15b3d'
